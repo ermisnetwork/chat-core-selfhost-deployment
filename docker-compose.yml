@@ -1,5 +1,4 @@
 services:
-
   uhm-datastore:
     image: ermisnetwork/ermis-datastore:v1.0.0
     container_name: uhm-datastore
@@ -57,11 +56,9 @@ services:
     container_name: uhm-bellboy
     image: ermisnetwork/ermis-bellboy:v1.0.0
     environment:
-      - BELLBOY_CONFIG=/app/bellboy.toml
+      - BELLBOY_CONFIG=/app/config/bellboy.toml
     volumes:
-      - ./config/bellboy.toml:/app/bellboy.toml
-      - ./config/*.p8:/app/*.p8 # Put .p8 file name here
-      - ./config/firebase_config.json:/app/firebase_config.json
+      - ./config:/app/config
     network_mode: "host"
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8899"]

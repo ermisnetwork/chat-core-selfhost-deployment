@@ -10,9 +10,9 @@ datastore_secret = "datastore-secret"
 
 postgres_host = "0.0.0.0"
 postgres_port = 5432
-postgres_user = ""
+postgres_user = "your-user"
 postgres_database = "bellboy"
-postgres_password = ""
+postgres_password = "your-password"
 postgres_max_connections = 10
 postgres_min_connections = 2
 
@@ -24,7 +24,7 @@ meilisearch_secret = "ms-secret"
 
 max_request_size = 2_000_000_000                                                    # 2GB
 
-jwt_secret = "<must-fit-with-jwt-secret-of-eeu-service (auth_shared_secret)>"
+jwt_secret = "replace-with-strong-shared-auth-secret" # Must be identical to `AUTH_SHARED_SECRET` in `.env`
 
 unread_sync_interval = 10 # seconds
 debug_mode = true
@@ -47,8 +47,9 @@ mls_transition_outbox_max_attempts = 20
 max_message_length = 20000
 
 auth_mode = "self_host"
-license_install_key = ""
+license_install_key = "sgik_v1_eyJ2ZXJzaW9uIjoxLCJ2ZW5kb3JfdXJsIjoiaHR0cHM6Ly9zdHJlYW0tdmVuZG9yLmJhbmRpYS52biIsImN1c3RvbWVyX2lkIjoiY3VzXzAxOWYxMzFhLWVlNjItN2I2MC05Yjg0LTk2ZjQzMGM1ZWU2ZCIsImRlcGxveW1lbnRfaWQiOiJkZXBfMDE5ZjEzMWEtZWVlOC03ZDExLWIwODItMTU0NDhiZWJmMjI3Iiwic2VjcmV0IjoiYmVsbGJveS1zZWNyZXQifQ"
 license_allow_insecure_http=true
+license_state_path = "/app/config/license-state.json"
 
 storage_access_token = ""
 storage_secret_key = ""
@@ -57,13 +58,13 @@ storage_public_url = ""
 storage_bucket_name = ""
 storage_bucket_path = ""
 
-firebase_config_path = "./firebase_config.json"
-voip_secret_path = "./*.p8" # replace with your .p8 file name
+firebase_config_path = "/app/config/firebase_config.json"
+voip_secret_path = "/app/config/AppleAuthKey.p8" # replace with your .p8 file name
 voip_key_id = ""
 voip_team_id = ""
 voip_domain = ""
 voip_topic = ""
 
-link_preview_domain = "https://<your_link_preview_domain>/api/link-preview?url="
+link_preview_domain = "http://localhost:3000/api/link-preview?url=" # replace with your webapp url
 
-instance_id = "<gen-your-uuid-v4>"
+instance_id = "00000000-0000-0000-0000-000000000000" # gen new uuidv4 for each instance
