@@ -1,0 +1,4 @@
+listen_addr: 127.0.0.1:6999
+db_addr: 0.0.0.0:7799
+secret: concierge-quic-secret
+db_secret: concierge-quic-secret

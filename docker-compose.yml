@@ -1,0 +1,137 @@
+services:
+
+  uhm-datastore:
+    image: ermisnetwork/ermis-datastore:v1.0.0
+    container_name: uhm-datastore
+    volumes:
+      - ./config/datastore-config.yaml:/app/service.yaml
+      - uhm-datastore-data:/app/data
+    network_mode: "host"
+    restart: unless-stopped
+
+  uhm-roomserver:
+    image: ermisnetwork/ermis-concierge-quic:v1.0.0
+    container_name: uhm-room_server
+    volumes:
+      - ./config/concierge-config.yaml:/app/service.yaml
+    network_mode: "host"
+    restart: unless-stopped
+    depends_on:
+      - uhm-datastore
+
+  uhm-db:
+    container_name: uhm-db
+    image: postgres:17
+    environment:
+      POSTGRES_DB: bellboy
+      POSTGRES_USER: your-user # edit this
+      POSTGRES_PASSWORD: your-password # edit this
+    network_mode: "host"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U your-user -d bellboy"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - uhm-pgdata:/var/lib/postgresql/data
+      - ./config/bellboy.sql:/docker-entrypoint-initdb.d/bellboy.sql
+    restart: unless-stopped
+
+  uhm-meilisearch:
+    container_name: uhm-meilisearch
+    image: getmeili/meilisearch:v1.9
+    ports:
+      - "7801:7700"
+    environment:
+      - MEILI_MASTER_KEY=ms-secret # edit this
+      - MEILI_NO_ANALYTICS=true
+      - MEILI_MAX_INDEXING_MEMORY=8589934592 # 8GB
+      - MEILI_MAX_INDEXING_THREADS=16
+      - MEILI_LOG_LEVEL=warn 
+      - MEILI_HTTP_LOG_LEVEL=warn 
+    volumes:
+      - data.ms:/data.ms
+    restart: unless-stopped
+    
+  uhm-bellboy:
+    container_name: uhm-bellboy
+    image: ermisnetwork/ermis-bellboy:v1.0.0
+    environment:
+      - BELLBOY_CONFIG=/app/bellboy.toml
+    volumes:
+      - ./config/bellboy.toml:/app/bellboy.toml
+      - ./config/*.p8:/app/*.p8 # Put .p8 file name here
+      - ./config/firebase_config.json:/app/firebase_config.json
+    network_mode: "host"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8899"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+    depends_on:
+      - uhm-datastore
+      - uhm-roomserver
+      - uhm-db
+      - uhm-meilisearch
+
+  uhm-linkpreview:
+    container_name: uhm-linkpreview
+    image: ermisnetwork/ermis-linkpreview:v1.0.0
+    restart: always
+    ports:
+      - "3000:3000"
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ermis
+      POSTGRES_PASSWORD: ermis
+      POSTGRES_DB: ermis_end_user
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ermis -d ermis_end_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  user-service:
+    image: hoangbim/sub2s-user-service:selfhost-latest
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://ermis:ermis@postgres:5432/ermis_end_user
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "5150:5150"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:5150/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    
+
+volumes:
+  uhm-datastore-data:
+  uhm-pgdata:
+  data.ms:
+  postgres_data:
+  redis_data:

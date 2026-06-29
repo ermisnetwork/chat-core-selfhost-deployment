@@ -1,0 +1,69 @@
+[global]
+debug = true
+address = "0.0.0.0"
+port = 8899
+thread_nums = 8
+log = "info"
+
+datastore_addr = "0.0.0.0:7799"
+datastore_secret = "datastore-secret"
+
+postgres_host = "0.0.0.0"
+postgres_port = 5432
+postgres_user = ""
+postgres_database = "bellboy"
+postgres_password = ""
+postgres_max_connections = 10
+postgres_min_connections = 2
+
+concierge_host = "127.0.0.1:6999"
+concierge_secret = "concierge-quic-secret"
+
+meilisearch_host = "0.0.0.0:7801"
+meilisearch_secret = "ms-secret"
+
+max_request_size = 2_000_000_000                                                    # 2GB
+
+jwt_secret = "<must-fit-with-jwt-secret-of-eeu-service (auth_shared_secret)>"
+
+unread_sync_interval = 10 # seconds
+debug_mode = true
+fcm_max_concurrent = 100
+voip_max_concurrent = 10
+attachment_cleanup_interval = 30  # seconds
+attachment_cleanup_batch_size = 200
+archive_manifest_reconcile_interval = 60
+archive_manifest_pending_timeout = 300
+archive_manifest_reconcile_max_attempts = 3
+archive_manifest_reconcile_batch_size = 200
+archive_manifest_maintenance_batch_size = 20
+archive_manifest_delete_unreferenced_snapshots = false
+group_sponsored_archive_enabled = true
+e2ee_byte_legacy = true
+mls_transition_outbox_interval = 5
+mls_transition_outbox_batch_size = 50
+mls_transition_outbox_lease_seconds = 60
+mls_transition_outbox_max_attempts = 20
+max_message_length = 20000
+
+auth_mode = "self_host"
+license_install_key = ""
+license_allow_insecure_http=true
+
+storage_access_token = ""
+storage_secret_key = ""
+storage_private_url = ""
+storage_public_url = ""
+storage_bucket_name = ""
+storage_bucket_path = ""
+
+firebase_config_path = "./firebase_config.json"
+voip_secret_path = "./*.p8" # replace with your .p8 file name
+voip_key_id = ""
+voip_team_id = ""
+voip_domain = ""
+voip_topic = ""
+
+link_preview_domain = "https://<your_link_preview_domain>/api/link-preview?url="
+
+instance_id = "<gen-your-uuid-v4>"
