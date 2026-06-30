@@ -106,7 +106,7 @@ services:
       retries: 5
 
   user-service:
-    image: hoangbim/sub2s-user-service:selfhost-latest
+    image: ermisnetwork/ermis-user-service:v1.0.0
     env_file:
       - .env
     environment:
